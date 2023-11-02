@@ -194,13 +194,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 10,
+    marginHorizontal: 10,
   },
   currentMonth: {
     fontSize: 18,
   },
   navIcon: {
-    fontSize: 24,
+    fontSize: 36,
+    marginBottom: 10,
     fontWeight: 'bold',
   },
   headerRow: {

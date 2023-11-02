@@ -28,6 +28,7 @@ function HomeView({ navigation }: { navigation: HomeScreenNavigationProp }) {
   const usersService = new UsersService();
   const [user, setUser] = useState<User | null>(null);
   const [username, setUsername] = useState(user ? user.username : '');
+  const [isLoading, setIsLoading] = useState(false);
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -37,19 +38,26 @@ function HomeView({ navigation }: { navigation: HomeScreenNavigationProp }) {
     setUsername(username);
   }
 
-  const goToSadhanaList = () => {
+  const goToSadhanaList = async () => {
     if (!username) {
       Alert.alert('Fill in username!', 'Please enter your username before proceeding.');
       return;
     }
 
+    setIsLoading(true);
     // create user
-    usersService.createUser({
+    await usersService.createUser({
       username,
       sadhanaData: [],
     });
 
+    setIsLoading(false);
+
     navigation.navigate('SadhanaList');
+  };
+
+  const getSadhanaButtonText = () => {
+    return isLoading && !user ? 'Configuring...' : 'Show Sadhana List';
   }
 
   useEffect(() => {
@@ -89,7 +97,9 @@ function HomeView({ navigation }: { navigation: HomeScreenNavigationProp }) {
             style={commonStyles.touchableBtnLg}
             onPress={goToSadhanaList}
           >
-            <Text style={commonStyles.touchableBtnText}>Show Sadhana List</Text>
+            <Text style={commonStyles.touchableBtnText}>
+              {getSadhanaButtonText()}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
