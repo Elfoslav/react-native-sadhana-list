@@ -35,7 +35,7 @@ function HomeView({ navigation }: { navigation: HomeScreenNavigationProp }) {
   };
 
   const onChangeUsername = (username: string) => {
-    setUsername(username);
+    setUsername(username.trim());
   }
 
   const goToSadhanaList = async () => {
