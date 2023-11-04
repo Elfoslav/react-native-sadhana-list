@@ -15,12 +15,13 @@ import User from '../models/User';
 import SadhanaManager from '../lib/SadhanaManager';
 
 const SadhanaListView: React.FC = () => {
-  const username = 'elfoslav';
   const usersService = new UsersService();
   const sadhanaManager = new SadhanaManager();
   const initialDate = new Date();
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(initialDate);
+  // current shown sadhana list
   const [sadhanaList, setSadhanaList] = useState<SadhanaData[]>([]);
 
   async function generateSadhanaList(date: Date): Promise<SadhanaData[]> {
@@ -62,12 +63,17 @@ const SadhanaListView: React.FC = () => {
 
   const updateSadhanaList = async (sadhanaData: SadhanaData[]) => {
     setSadhanaList(sadhanaData);
-    const user = await usersService.getUser() as User;
-    const mergedSadhanaData = sadhanaManager.mergeSadhanaList(sadhanaData, user);
-    usersService.saveUser({
-      username,
-      sadhanaData: mergedSadhanaData,
-    });
+
+    if (user) {
+      const mergedSadhanaData = sadhanaManager.mergeSadhanaList(sadhanaData, user);
+      const updatedUser = {
+        ...user,
+        sadhanaData: mergedSadhanaData,
+      };
+
+      setUser(updatedUser);
+      usersService.saveUser(updatedUser);
+    }
   }
 
   const handleMangalaChange = (index: number) => {
@@ -112,6 +118,17 @@ const SadhanaListView: React.FC = () => {
 
     fetchData();
   }, [currentDate]);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const foundUser = await usersService.getUser();
+      if (foundUser) {
+        setUser(foundUser);
+      }
+    }
+
+    getUser();
+  }, []);
 
   // Render the table as a vertical list
   return (

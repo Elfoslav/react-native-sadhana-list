@@ -38,7 +38,7 @@ class UsersService {
     try {
       // Backup data in firestore DB
       this.userFirestore.saveUser(user);
-      await this.userStore.saveUser(user);
+      return await this.userStore.saveUser(user);
     } catch (error) {
       console.log('saveUser error', error);
       throw error;
