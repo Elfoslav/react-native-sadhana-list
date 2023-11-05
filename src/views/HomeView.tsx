@@ -66,6 +66,7 @@ function HomeView({ navigation }: { navigation: HomeScreenNavigationProp }) {
       if (foundUser) {
         setUser(foundUser);
         setUsername(foundUser.username);
+        navigation.navigate('SadhanaList');
       }
     }
 
