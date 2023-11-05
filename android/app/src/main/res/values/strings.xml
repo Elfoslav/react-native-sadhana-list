@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">sadhanaList</string>
+    <string name="app_name">Sadhana List</string>
+    <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
+    <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">f5N83N6iHKXjB0-heXYwL2TciBk1kc_PC4a45</string>
 </resources>

@@ -67,3 +67,9 @@ yarn-error.log
 
 # Firebase
 android/app/google-services.json
+
+# appcenter
+android/app/src/main/assets/appcenter-config.json
+
+# env
+.env
