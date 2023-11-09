@@ -49,6 +49,7 @@ const SadhanaListView: React.FC = () => {
         gauraArati: sadhanaItem ? sadhanaItem.gauraArati : false,
         japaRounds: sadhanaItem ? sadhanaItem.japaRounds : 0,
         reading: sadhanaItem ? sadhanaItem.reading : 0,
+        note: sadhanaItem ? sadhanaItem.note : '',
       };
     });
   }
