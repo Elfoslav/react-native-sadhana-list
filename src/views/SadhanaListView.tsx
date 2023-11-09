@@ -5,14 +5,17 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  TextInput,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import UsersService from '../services/UsersService';
 import SadhanaData from '../models/SadhanaData';
 import User from '../models/User';
 import SadhanaManager from '../lib/SadhanaManager';
+import { Button, Icon } from '@rneui/themed';
+import SadhanaModal from '../components/SadhanaModal';
+import commonStyles from '../styles/commonStyles';
 
 const SadhanaListView: React.FC = () => {
   const usersService = new UsersService();
@@ -23,6 +26,8 @@ const SadhanaListView: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(initialDate);
   // current shown sadhana list
   const [sadhanaList, setSadhanaList] = useState<SadhanaData[]>([]);
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(-1);
 
   async function generateSadhanaList(date: Date): Promise<SadhanaData[]> {
     const currentYear = date.getFullYear();
@@ -41,6 +46,7 @@ const SadhanaListView: React.FC = () => {
         date: currentDate,
         mangala: sadhanaItem ? sadhanaItem.mangala : false,
         guruPuja: sadhanaItem ? sadhanaItem.guruPuja : false,
+        gauraArati: sadhanaItem ? sadhanaItem.gauraArati : false,
         japaRounds: sadhanaItem ? sadhanaItem.japaRounds : 0,
         reading: sadhanaItem ? sadhanaItem.reading : 0,
       };
@@ -74,17 +80,11 @@ const SadhanaListView: React.FC = () => {
       setUser(updatedUser);
       usersService.saveUser(updatedUser);
     }
-  }
-
-  const handleMangalaChange = (index: number) => {
-    const updatedSadhanaList = [...sadhanaList];
-    updatedSadhanaList[index].mangala = !updatedSadhanaList[index].mangala;
-    updateSadhanaList(updatedSadhanaList);
   };
 
-  const handleGuruPujaChange = (index: number) => {
+  const handleCheckboxChange = (index: number, propertyName: string) => {
     const updatedSadhanaList = [...sadhanaList];
-    updatedSadhanaList[index].guruPuja = !updatedSadhanaList[index].guruPuja;
+    updatedSadhanaList[index][propertyName] = !updatedSadhanaList[index][propertyName];
     updateSadhanaList(updatedSadhanaList);
   };
 
@@ -97,6 +97,23 @@ const SadhanaListView: React.FC = () => {
       updatedSadhanaList[index].japaRounds = null;
       updateSadhanaList(updatedSadhanaList);
     }
+  };
+
+  const openEditModal = (index: number) => {
+    setEditingIndex(index);
+    setEditModalVisible(true);
+  };
+
+  const confirmEditModal = (sadhanaData: SadhanaData) => {
+    const updatedSadhanaList = [...sadhanaList];
+    // Update sadhana data on given index
+    updatedSadhanaList[editingIndex] = sadhanaData;
+    updateSadhanaList(updatedSadhanaList);
+    closeEditModal();
+  };
+
+  const closeEditModal = () => {
+    setEditModalVisible(false);
   };
 
   const formatDate = (date: Date) => {
@@ -150,7 +167,9 @@ const SadhanaListView: React.FC = () => {
             <Text style={styles.headerText}>Date</Text>
             <Text style={styles.headerText}>Mangala</Text>
             <Text style={styles.headerText}>Guru Puja</Text>
-            <Text style={styles.headerText}>Japa rounds</Text>
+            <Text style={styles.headerText}>Gaura</Text>
+            <Text style={styles.headerText}>Japa</Text>
+            <Text style={styles.headerText}>Note</Text>
           </View>
 
           {isLoading && sadhanaList.length === 0 && (
@@ -175,26 +194,43 @@ const SadhanaListView: React.FC = () => {
                 <View style={styles.mangalaCheckboxContainer}>
                   <CheckBox
                     value={sadhana.mangala}
-                    onValueChange={() => handleMangalaChange(index)}
+                    onValueChange={() => handleCheckboxChange(index, 'mangala')}
                   />
                 </View>
                 <View style={styles.guruPujaCheckboxContainer}>
                   <CheckBox
                     value={sadhana.guruPuja}
-                    onValueChange={() => handleGuruPujaChange(index)}
+                    onValueChange={() => handleCheckboxChange(index, 'guruPuja')}
+                  />
+                </View>
+                <View style={styles.gauraAratiCheckboxContainer}>
+                  <CheckBox
+                    value={sadhana.gauraArati}
+                    onValueChange={() => handleCheckboxChange(index, 'gauraArati')}
                   />
                 </View>
                 <TextInput
-                  style={styles.input}
+                  style={commonStyles.numericInput}
+                  keyboardType="numeric"
                   placeholder="0"
                   value={sadhana.japaRounds ? sadhana.japaRounds.toString() : ''}
                   onChangeText={(value) => handleJapaRoundsChange(index, value)}
                 />
+                <Button size="sm" type="clear" onPress={() => openEditModal(index)}>
+                  <Icon name="edit" color="gray" />
+                </Button>
               </View>
             )
           })}
         </View>
       </ScrollView>
+
+      <SadhanaModal
+        isVisible={isEditModalVisible}
+        sadhanaData={sadhanaList[editingIndex]}
+        confirmModal={confirmEditModal}
+        closeModal={closeEditModal}
+      />
     </SafeAreaView>
   );
 };
@@ -254,15 +290,10 @@ const styles = StyleSheet.create({
   },
   guruPujaCheckboxContainer: {
     alignItems: 'center',
-    marginEnd: 80,
+    marginEnd: 20,
   },
-  input: {
-    width: 30,
-    height: 28,
-    borderColor: 'lightgray',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 5,
+  gauraAratiCheckboxContainer: {
+    alignItems: 'center',
   },
 });
 
