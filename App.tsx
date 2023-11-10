@@ -14,7 +14,9 @@ import SadhanaListView from './src/views/SadhanaListView';
 
 // If you want your app to discover updates more quickly, you can also choose to sync up with the CodePush server
 // every time the app resumes from the background.
-const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+const codePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+};
 
 function App(): JSX.Element {
   const Stack = createNativeStackNavigator();
