@@ -126,6 +126,16 @@ const SadhanaListView: React.FC = () => {
       && date1.getMonth() === date2.getMonth();
   };
 
+  const shortenString = (text: string, num: number) => {
+    const shortenedText = text.slice(0, num);
+
+    if (text.length > num) {
+      return `${shortenedText}...`;
+    }
+
+    return shortenedText;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -191,35 +201,45 @@ const SadhanaListView: React.FC = () => {
                 key={index}
                 style={[styles.row, isToday ? styles.activeRow : null]}
               >
-                <Text style={styles.dayText}>{formatDate(sadhana.date)}</Text>
-                <View style={styles.mangalaCheckboxContainer}>
-                  <CheckBox
-                    value={sadhana.mangala}
-                    onValueChange={() => handleCheckboxChange(index, 'mangala')}
+                <View
+                  style={styles.flexRow}
+                >
+                  <Text style={styles.dayText}>{formatDate(sadhana.date)}</Text>
+                  <View style={styles.mangalaCheckboxContainer}>
+                    <CheckBox
+                      value={sadhana.mangala}
+                      onValueChange={() => handleCheckboxChange(index, 'mangala')}
+                    />
+                  </View>
+                  <View style={styles.guruPujaCheckboxContainer}>
+                    <CheckBox
+                      value={sadhana.guruPuja}
+                      onValueChange={() => handleCheckboxChange(index, 'guruPuja')}
+                    />
+                  </View>
+                  <View style={styles.gauraAratiCheckboxContainer}>
+                    <CheckBox
+                      value={sadhana.gauraArati}
+                      onValueChange={() => handleCheckboxChange(index, 'gauraArati')}
+                    />
+                  </View>
+                  <TextInput
+                    style={commonStyles.numericInput}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    value={sadhana.japaRounds ? sadhana.japaRounds.toString() : ''}
+                    onChangeText={(value) => handleJapaRoundsChange(index, value)}
                   />
+                  <Button size="sm" type="clear" onPress={() => openEditModal(index)}>
+                    <Icon name="edit" color="gray" />
+                  </Button>
                 </View>
-                <View style={styles.guruPujaCheckboxContainer}>
-                  <CheckBox
-                    value={sadhana.guruPuja}
-                    onValueChange={() => handleCheckboxChange(index, 'guruPuja')}
-                  />
-                </View>
-                <View style={styles.gauraAratiCheckboxContainer}>
-                  <CheckBox
-                    value={sadhana.gauraArati}
-                    onValueChange={() => handleCheckboxChange(index, 'gauraArati')}
-                  />
-                </View>
-                <TextInput
-                  style={commonStyles.numericInput}
-                  keyboardType="numeric"
-                  placeholder="0"
-                  value={sadhana.japaRounds ? sadhana.japaRounds.toString() : ''}
-                  onChangeText={(value) => handleJapaRoundsChange(index, value)}
-                />
-                <Button size="sm" type="clear" onPress={() => openEditModal(index)}>
-                  <Icon name="edit" color="gray" />
-                </Button>
+
+                {sadhana.note && (
+                  <View style={styles.note}>
+                    <Text>{ shortenString(sadhana.note, 50) }</Text>
+                  </View>
+                )}
               </View>
             )
           })}
@@ -267,12 +287,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
   },
   row: {
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  flexRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
     alignItems: 'center',
-    borderColor: 'lightgray',
-    padding: 10,
   },
   activeRow: {
     backgroundColor: '#E0E0E0',
@@ -295,6 +318,9 @@ const styles = StyleSheet.create({
   },
   gauraAratiCheckboxContainer: {
     alignItems: 'center',
+  },
+  note: {
+    marginTop: 2,
   },
 });
 
