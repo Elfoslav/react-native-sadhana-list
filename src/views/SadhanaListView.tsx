@@ -29,6 +29,11 @@ const SadhanaListView: React.FC = () => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
 
+  let mangalaSum = 0;
+  let guruPujaSum = 0;
+  let gauraAratiSum = 0;
+  let japaSum = 0;
+
   async function generateSadhanaList(date: Date): Promise<SadhanaData[]> {
     const currentYear = date.getFullYear();
     const currentMonth = date.getMonth();
@@ -201,6 +206,10 @@ const SadhanaListView: React.FC = () => {
           {/* List of days */}
           {sadhanaList.map((sadhana, index) => {
             const isToday = isSameDay(sadhana.date, new Date());
+            mangalaSum += sadhana.mangala ? 1 : 0;
+            guruPujaSum += sadhana.guruPuja ? 1 : 0;
+            gauraAratiSum += sadhana.gauraArati ? 1 : 0;
+            japaSum += sadhana.japaRounds ? sadhana.japaRounds : 0;
 
             return (
               <View
@@ -253,6 +262,30 @@ const SadhanaListView: React.FC = () => {
               </View>
             )
           })}
+
+          <View
+            style={styles.row}
+          >
+            <View
+              style={styles.flexRow}
+            >
+              <Text style={styles.dayText}>
+                Sum:
+              </Text>
+              <View style={styles.mangalaSumContainer}>
+                <Text>{mangalaSum}/{sadhanaList.length}</Text>
+              </View>
+              <View style={styles.guruPujaSumContainer}>
+                <Text>{guruPujaSum}/{sadhanaList.length}</Text>
+              </View>
+              <View style={styles.gauraAratiSumContainer}>
+                <Text>{gauraAratiSum}/{sadhanaList.length}</Text>
+              </View>
+              <View style={styles.japaSumContainer}>
+                <Text>{japaSum}/{sadhanaList.length * 16}</Text>
+              </View>
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -328,6 +361,19 @@ const styles = StyleSheet.create({
   },
   gauraAratiCheckboxContainer: {
     alignItems: 'center',
+  },
+  mangalaSumContainer: {
+    marginStart: 5,
+  },
+  guruPujaSumContainer: {
+    marginStart: 35,
+  },
+  gauraAratiSumContainer: {
+    marginStart: 20,
+  },
+  japaSumContainer: {
+    alignItems: 'center',
+    marginEnd: 46,
   },
   note: {
     marginTop: 2,
