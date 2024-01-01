@@ -136,6 +136,12 @@ const SadhanaListView: React.FC = () => {
     return shortenedText;
   };
 
+  const getAbbreviatedDayName = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
+    const dayName = date.toLocaleDateString('en-US', options);
+    return dayName.slice(0, 3);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -204,7 +210,11 @@ const SadhanaListView: React.FC = () => {
                 <View
                   style={styles.flexRow}
                 >
-                  <Text style={styles.dayText}>{formatDate(sadhana.date)}</Text>
+                  <Text style={styles.dayText}>
+                    {getAbbreviatedDayName(sadhana.date)}
+                    {'\n'}
+                    {formatDate(sadhana.date)}
+                  </Text>
                   <View style={styles.mangalaCheckboxContainer}>
                     <CheckBox
                       value={sadhana.mangala}
@@ -237,7 +247,7 @@ const SadhanaListView: React.FC = () => {
 
                 {sadhana.note && (
                   <View style={styles.note}>
-                    <Text>{ shortenString(sadhana.note, 50) }</Text>
+                    <Text>{shortenString(sadhana.note, 50)}</Text>
                   </View>
                 )}
               </View>
